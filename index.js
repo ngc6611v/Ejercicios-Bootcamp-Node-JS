@@ -61,6 +61,7 @@ function onSubmit(event){
     }
     
     //prueba
+    //prueba
 
     tr.dataset.categoria = categoria; //esto no es visible para el usuario
     //Strings literals y string interpolations
