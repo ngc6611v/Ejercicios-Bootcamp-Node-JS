@@ -8,7 +8,8 @@
 </head>
 
 <body>
-    <form>
+    <form action="index.html">
+        <input type="hidden" name="codigo" id="codigo">
         <div>
             <label for= "nombre">Nombre</label>
             <input type="text" name="nombre" id="nombre">
@@ -47,21 +48,13 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Pantalón</td>
-                    <td>10</td>
-                    <td>100</td>
-                    <td>1000</td>
-                    <td><a href="#">Editar</a>|<a href="#">Eliminar</a></td>
-                </tr>
             </tbody>
             <tfoot>
                 <tr>
                     <td colspan="2">Totales:</td>
-                    <td>10</td>
-                    <td>100</td>
-                    <td>1000</td>
+                    <td id="tdCantidadTotal">0</td>
+                    <td id="tdPrecioTotal">0</td>
+                    <td id="tdGranTotal">0</td>
                     <td></td>
                 </tr>
             </tfoot>
