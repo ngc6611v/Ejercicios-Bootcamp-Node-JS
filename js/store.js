@@ -85,3 +85,29 @@ const productoAgregado = (payload) => ({
     reducer,
     productoSeleccionado
 }*/
+
+// function loggerMiddleware(store){
+//     return function dispatchWrapper(next){
+//         return function actionHandler(action){
+//             //const stateA = store.getState();
+//             //console.log("dispatching", action);
+//             //console.log("state before", stateA);            
+//             //next(action);
+//             //const stateB = store.getState();
+//             //console.log("state after", stateB);
+//             //console.log("dispatched", action);
+
+//             next(action);
+//             const state = store.getState();
+//             console.log("dispatching", action);
+//             console.log("state", state);
+//         }
+//     }
+// }
+
+const loggerMiddleware = store => next => action => {
+    console.log("dispatching", action);
+    const result = next(action);
+    console.log("next state", store.getState());
+    return result;
+}
