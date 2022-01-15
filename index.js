@@ -47,7 +47,7 @@ function onSubmit(event){
     preciosTotales = preciosTotales + parseFloat(precio);
     granTotal = granTotal + parseFloat(total);
 
-    let tr = document.createElement("tr");
+    let tr;
 
     if(!codigo)//verificar si codigo tiene un valor
     {
