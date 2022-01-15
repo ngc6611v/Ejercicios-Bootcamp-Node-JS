@@ -69,6 +69,13 @@ const reducer = (state, action)=> {
         }
     }
 
+    if(action.type == "producto-seleccionado"){
+        const codigo = action.payload.codigo;
+        return{
+            ...state,
+            producto: state.productos.find(x=> x.codigo==codigo) || {}
+        }
+    }
 
     return state;
 }
@@ -77,15 +84,28 @@ const store = Redux.createStore(reducer, preloadedState);
 
 let latestState;
 
-const  unsuscribe = store.subscribe(()=>{
+store.subscribe(()=>{
     let currentState = store.getState();
     if(currentState != latestState){
         latestState = currentState;
         console.log("estado: ", currentState);
+        rednerForm(currentState.producto)
         renderTable(currentState.productos);
     }
     //console.log("estado: ", store.getState());
-})
+});
+
+function rednerForm(producto){
+
+    inputCodigo.value = producto.codigo || "";
+    /*if(producto.nombre){ // es lo mismo que if(producto.nombre  != undefined)
+        inputNombre.value = producto.nombre;
+    }*/    
+    inputNombre.value = producto.nombre || "";
+    inputCantidad.value = producto.cantidad || "";
+    inputPrecio.value = producto.precio || "";
+    selectCategoria.value = producto.categoria || 1;
+}
 
 function renderTable(productos){ 
     
@@ -120,6 +140,17 @@ function renderTable(productos){
                 }
             });
         });
+
+        editar.addEventListener("click", (event)=> {
+            event.preventDefault();
+            store.dispatch({
+                type: "producto-seleccionado",
+                payload: {
+                    codigo: item.codigo
+                }
+            });
+        });
+
         return tr;
     });
 
@@ -140,6 +171,61 @@ function renderTable(productos){
     }
 }
 
+form.addEventListener("submit", onSubmit);
+
+/**
+ * Esto es un JSdoc comment
+ * @param {Event} event 
+ */
+function onSubmit(event){
+    event.preventDefault(); //esto evita que el evento realice lo que tiene programado el navegador por defecto
+    
+    //capturar la información que ingresa el usuario en el formulario
+    const data = new FormData(form); //se quiere consultar la data del formulario form
+    const values = Array.from(data.entries()); //Convierte la data del formulario en un arreglo
+
+    const [frmCodigo, frmNombre, frmCantidad, frmPrecio, frmCategoria] = values;
+
+    const codigo= parseInt(frmCodigo[1]);
+    const nombre = frmNombre[1];
+    const cantidad = parseFloat(frmCantidad[1]);
+    const precio = parseFloat(frmPrecio[1]);
+    const categoria = parseInt(frmCategoria[1]);    
+
+    if(codigo)
+    {
+        store.dispatch({
+            type: "producto-modificado",
+            payload: {
+                codigo, // esto puede ser codigo: codigo pero se simplificó porque el nombre de la propiedad y de la variable asignada es el mismo
+                nombre,
+                cantidad,
+                precio,
+                categoria
+            }
+        });
+    }
+    else{
+        store.dispatch({
+            type: "producto-agregado",
+            payload: {
+                codigo, // esto puede ser codigo: codigo pero se simplificó porque el nombre de la propiedad y de la variable asignada es el mismo
+                nombre,
+                cantidad,
+                precio,
+                categoria
+            }
+        });
+    }
+
+    //esto es en vez del form.reset();
+    store.dispatch({
+        type: "producto-seleccionado",
+        payload: {
+            codigo: null
+        }
+    });
+}
 store.dispatch({
     type: "producto-agregado",
     payload: {
