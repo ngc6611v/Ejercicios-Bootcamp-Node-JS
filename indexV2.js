@@ -129,21 +129,15 @@ function renderTable(productos){
         tbody.appendChild(tr);
     });
 
-    const cantidadTotal = productos
-        .map(x => x.cantidad)
-        .reduce((a,b) => a + b, 0);
+    cantidadTotalElement.innerText = sum(productos, x=>x.cantidad);
+    precioTotalElement.innerText = sum(productos, x=>x.precio);
+    granTotalElement.innerText = sum(productos, x=>x.total);
 
-    const precioTotal = productos
-        .map(x => x.precio)
-        .reduce((a,b) => a + b, 0);
-
-    const granTotal = productos
-        .map(x => x.total) // x.total puede ser también x.cantidad * x.precio
-        .reduce((a,b) => a + b, 0);
-
-    cantidadTotalElement.innerText = cantidadTotal;
-    precioTotalElement.innerText = precioTotal;
-    granTotalElement.innerText = granTotal;
+    function sum(elementos, selector){
+        return elementos
+            .map(selector)
+            .reduce((a,b) => a + b, 0);
+    }
 }
 
 store.dispatch({
