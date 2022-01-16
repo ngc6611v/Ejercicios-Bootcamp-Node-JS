@@ -1,5 +1,13 @@
+const ActionTypes = {
+    ProductoAgregado: "producto-agregado",
+    ProductoModificado: "producto-modificado",
+    ProductoEliminado: "producto-eliminado",
+    ProductoSeleccionado: "producto-seleccionado",
+    ProductoAgregadoModificado: "producto-agregado-o-modificado"
+};
+
 const reducer = (state, action)=> {
-    if(action.type == "producto-agregado"){
+    if(action.type == ActionTypes.productoAgregado){
 
         //indice++;
         const producto = action.payload;
@@ -20,7 +28,7 @@ const reducer = (state, action)=> {
         };
     }
 
-    if(action.type == "producto-modificado"){
+    if(action.type == ActionTypes.ProductoModificado){
         const producto = action.payload;
         const productos = state.productos.slice(); //copia del arreglo original
         const codigo = producto.codigo;
@@ -34,7 +42,7 @@ const reducer = (state, action)=> {
         };
     }
 
-    if(action.type == "producto-eliminado"){
+    if(action.type == ActionTypes.ProductoEliminado){
         const codigo = action.payload.codigo;
         const productos = state.productos.filter((item) => item.codigo != codigo);
         return {
@@ -43,7 +51,7 @@ const reducer = (state, action)=> {
         }
     }
 
-    if(action.type == "producto-seleccionado"){
+    if(action.type == ActionTypes.ProductoSeleccionado){
         const codigo = action.payload.codigo;
         return{
             ...state,
@@ -56,31 +64,31 @@ const reducer = (state, action)=> {
 
 // esto es un action builder
 const productoSeleccionado = (codigo) => ({
-    type: "producto-seleccionado",
+    type: ActionTypes.ProductoSeleccionado,
     payload: {
         codigo
     }
 });
 
 const productoEliminado = (codigo) => ({
-    type: "producto-eliminado",
+    type: ActionTypes.ProductoEliminado,
     payload: {
         codigo
     }
 });
 
 const productoModificado = (payload) => ({
-    type: "producto-modificado",
+    type: ActionTypes.ProductoModificado,
     payload
 });
 
 const productoAgregado = (payload) => ({
-    type: "producto-agregado",
+    type: ActionTypes.ProductoAgregado,
     payload
 });
 
 const agregarOModificarProducto = (payload) => ({
-    type: "producto-agregado-o-modificado",
+    type: ActionTypes.ProductoAgregadoModificado,
     payload
 });
 
@@ -116,7 +124,7 @@ const loggerMiddleware = store => next => action => {
 }
 
 const agregarOModificarProductoMiddleware = store => next => action => {
-    if(action.type != "producto-agregado-o-modificado") {
+    if(action.type != ActionTypes.ProductoAgregadoModificado) {
         return next(action);
     }
 
@@ -129,24 +137,30 @@ const agregarOModificarProductoMiddleware = store => next => action => {
     return store.dispatch(productoSeleccionado(null));
 }
 
-const generadorCodigoProductoMiddleware = store => next => action => {
+/*const generadorCodigoProductoMiddleware = store => next => action => {
     if(action.type != "producto-agregado") {
         return next(action);
     }
 
     action.payload = {...action.payload, codigo};
-}
+}*/
 
 function generadorCodigoProductoBuilder(codigoInicial){
 
     let codigo = codigoInicial;
     return store => next => action => {
-        if(action.type != "producto-agregado") {
+        if(action.type != ActionTypes.ProductoAgregado) {
             return next(action);
         }
 
         codigo++;    
-        action.payload = {...action.payload, codigo};
+        const actionToDispatch = {
+            ...action,
+            payload : {
+                ...action.payload,
+                codigo
+            }
+        };
         return next(action);
     };
 }
