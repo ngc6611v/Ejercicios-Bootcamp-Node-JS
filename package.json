@@ -1,0 +1,25 @@
+{
+  "name": "ejercicios-bootcamp-node-js",
+  "version": "1.0.0",
+  "description": "Ejercicios de los videos",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ngc6611v/Ejercicios-Bootcamp-Node-JS.git"
+  },
+  "keywords": [],
+  "author": "Vania Argueta <argueta.vania@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ngc6611v/Ejercicios-Bootcamp-Node-JS/issues"
+  },
+  "homepage": "https://github.com/ngc6611v/Ejercicios-Bootcamp-Node-JS#readme",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "^5.1.3",
+    "bootstrap-icons": "^1.7.2",
+    "redux": "^4.1.2"
+  }
+}
