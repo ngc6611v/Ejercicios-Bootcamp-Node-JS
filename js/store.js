@@ -7,59 +7,23 @@ const ActionTypes = {
 };
 
 const reducer = (state, action)=> {
-    if(action.type == ActionTypes.productoAgregado){
 
-        //indice++;
-        const producto = action.payload;
-        //const codigo = indice;
-        const total = producto.cantidad * producto.precio;
+    switch(action.type){
+        case ActionTypes.ProductoAgregado:            
+            return productoAgregadoReducer(state, action);
         
-        // retornar un nuevo estado y no modificar el que ya tenemos
-        return {
-            ...state, 
-            productos: [
-                ...state.productos,
-                {
-                    ...producto,
-                    //codigo, // esto es igual a codigo: codigo, (aplica cuando el nombre de la propiedad es igual al nombre de variable que se asigna a esta)
-                    total //esto es igual a total: total
-                }                
-            ]
-        };
-    }
+        case ActionTypes.ProductoModificado:
+            return productoModificadoReducer(state, action);
+            
+        case ActionTypes.ProductoEliminado:
+            return productoEliminadoReducer(state, action);
+        
+        case ActionTypes.ProductoSeleccionado:
+            return productoSeleccionadoReducer(state, action);
 
-    if(action.type == ActionTypes.ProductoModificado){
-        const producto = action.payload;
-        const productos = state.productos.slice(); //copia del arreglo original
-        const codigo = producto.codigo;
-        const total = producto.cantidad * producto.precio;
-        const old = productos.find((item) => item.codigo == codigo);
-        const index = productos.indexOf(old);
-        productos[index] = {...producto, total};
-        return {
-            ...state,
-            productos
-        };
+        default:
+            return state;
     }
-
-    if(action.type == ActionTypes.ProductoEliminado){
-        const codigo = action.payload.codigo;
-        const productos = state.productos.filter((item) => item.codigo != codigo);
-        return {
-            ...state,
-            productos
-        }
-    }
-
-    if(action.type == ActionTypes.ProductoSeleccionado){
-        const codigo = action.payload.codigo;
-        return{
-            ...state,
-            producto: state.productos.find(x=> x.codigo==codigo) || {}
-        }
-    }
-
-    return state;
 }
 
 // esto es un action builder
@@ -137,13 +101,53 @@ const agregarOModificarProductoMiddleware = store => next => action => {
     return store.dispatch(productoSeleccionado(null));
 }
 
-/*const generadorCodigoProductoMiddleware = store => next => action => {
-    if(action.type != "producto-agregado") {
-        return next(action);
-    }
+function productoSeleccionadoReducer(state, action) {
+    const codigo = action.payload.codigo;
+    return {
+        ...state,
+        producto: state.productos.find(x => x.codigo == codigo) || {}
+    };
+}
 
-    action.payload = {...action.payload, codigo};
-}*/
+function productoEliminadoReducer(state, action) {
+    const codigo = action.payload.codigo;
+    const productos = state.productos.filter((item) => item.codigo != codigo);
+    return {
+        ...state,
+        productos
+    };
+}
+
+function productoModificadoReducer(state, action) {
+    const producto = action.payload;
+    const productos = state.productos.slice(); //copia del arreglo original
+    const codigo = producto.codigo;
+    const total = producto.cantidad * producto.precio;
+    const old = productos.find((item) => item.codigo == codigo);
+    const index = productos.indexOf(old);
+    productos[index] = { ...producto, total };
+    return {
+        ...state,
+        productos
+    };
+}
+
+function productoAgregadoReducer(state, action) {
+    const producto = action.payload;
+    const total = producto.cantidad * producto.precio;
+
+    // retornar un nuevo estado y no modificar el que ya tenemos
+    return {
+        ...state,
+        productos: [
+            ...state.productos,
+            {
+                ...producto,
+                total
+            }
+        ]
+    };
+}
 
 function generadorCodigoProductoBuilder(codigoInicial){
 
@@ -161,6 +165,6 @@ function generadorCodigoProductoBuilder(codigoInicial){
                 codigo
             }
         };
-        return next(action);
+        return next(actionToDispatch);
     };
 }
