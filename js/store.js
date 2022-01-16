@@ -81,6 +81,11 @@ const productoAgregado = (payload) => ({
     payload
 });
 
+const agregarOModificarProducto = (payload) => ({
+    type: "producto-agregado-o-modificado",
+    payload
+});
+
 /*const productoStore = { //esto se puede utilizar para que productoSeleccionado sea privado
     reducer,
     productoSeleccionado
@@ -110,4 +115,22 @@ const loggerMiddleware = store => next => action => {
     const result = next(action);
     console.log("next state", store.getState());
     return result;
+}
+
+const agregarOModificarProductoMiddleware = store => next => action => {
+    if(action.type != "producto-agregado-o-modificado") {
+        return next(action);
+    }
+
+    const producto = action.payload;
+
+    if(producto.codigo)
+    {
+        store.dispatch(productoModificado(producto));
+    }
+    else{
+        store.dispatch(productoAgregado(producto));
+    }
+
+    return store.dispatch(productoSeleccionado(null));
 }
