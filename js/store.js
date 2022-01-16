@@ -1,11 +1,9 @@
-let indice = 0;
-
 const reducer = (state, action)=> {
     if(action.type == "producto-agregado"){
 
-        indice++;
+        //indice++;
         const producto = action.payload;
-        const codigo = indice;
+        //const codigo = indice;
         const total = producto.cantidad * producto.precio;
         
         // retornar un nuevo estado y no modificar el que ya tenemos
@@ -15,7 +13,7 @@ const reducer = (state, action)=> {
                 ...state.productos,
                 {
                     ...producto,
-                    codigo, // esto es igual a codigo: codigo, (aplica cuando el nombre de la propiedad es igual al nombre de variable que se asigna a esta)
+                    //codigo, // esto es igual a codigo: codigo, (aplica cuando el nombre de la propiedad es igual al nombre de variable que se asigna a esta)
                     total //esto es igual a total: total
                 }                
             ]
@@ -123,14 +121,32 @@ const agregarOModificarProductoMiddleware = store => next => action => {
     }
 
     const producto = action.payload;
+    const actionToDispatch = producto.codigo ? 
+        productoModificado(producto) :
+        productoAgregado(producto);
 
-    if(producto.codigo)
-    {
-        store.dispatch(productoModificado(producto));
-    }
-    else{
-        store.dispatch(productoAgregado(producto));
-    }
-
+    store.dispatch(actionToDispatch);
     return store.dispatch(productoSeleccionado(null));
+}
+
+const generadorCodigoProductoMiddleware = store => next => action => {
+    if(action.type != "producto-agregado") {
+        return next(action);
+    }
+
+    action.payload = {...action.payload, codigo};
+}
+
+function generadorCodigoProductoBuilder(codigoInicial){
+
+    let codigo = codigoInicial;
+    return store => next => action => {
+        if(action.type != "producto-agregado") {
+            return next(action);
+        }
+
+        codigo++;    
+        action.payload = {...action.payload, codigo};
+        return next(action);
+    };
 }
